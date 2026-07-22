@@ -52,7 +52,7 @@ services:
       TEAMSPEAK_QUERY_PASSWORD: "${TEAMSPEAK_QUERY_PASSWORD}"
       TEAMSPEAK_QUERY_NICKNAME: bbox-ts-live
       POLL_INTERVAL_MS: "10000"
-      LIVE_GROUP_NAME: "▶️"
+      LIVE_GROUP_NAME: "🔴"
       STREAM_GROUP_PREFIX: "▶️"
       LOG_LEVEL: info
     networks:

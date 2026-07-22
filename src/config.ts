@@ -54,7 +54,7 @@ export const configSchema = z
     TEAMSPEAK_QUERY_PASSWORD: requiredEnv("TEAMSPEAK_QUERY_PASSWORD"),
     TEAMSPEAK_QUERY_NICKNAME: optionalEnv("bbox-ts-live"),
     POLL_INTERVAL_MS: integerEnv("POLL_INTERVAL_MS", 10_000),
-    LIVE_GROUP_NAME: optionalEnv("▶️"),
+    LIVE_GROUP_NAME: optionalEnv("🔴"),
     STREAM_GROUP_PREFIX: optionalEnv("▶️"),
   })
   .transform((env) => ({
