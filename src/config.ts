@@ -78,7 +78,7 @@ export const configSchema = z
     TEAMSPEAK_SERVER_PORT: integerEnv("TEAMSPEAK_SERVER_PORT", 9987),
     TEAMSPEAK_QUERY_USERNAME: optionalEnv("serveradmin"),
     TEAMSPEAK_QUERY_PASSWORD: requiredEnv("TEAMSPEAK_QUERY_PASSWORD"),
-    TEAMSPEAK_QUERY_NICKNAME: optionalEnv("bbox-ts-live"),
+    TEAMSPEAK_QUERY_NICKNAME: optionalEnv("teamspeak-stream-live"),
 
     POLL_INTERVAL_MS: integerEnv("POLL_INTERVAL_MS", 10_000),
   })

@@ -1,11 +1,11 @@
 # CLAUDE.md
 
-Project-specific rules for `bbox-ts-live`. See `README.md` for what the service does.
+Project-specific rules for `teamspeak-stream-live`. See `README.md` for what the service does.
 
 ## Commands
 
 - Run `bun run typecheck`, `bun run lint`, `bun run format`, and `bun test` before committing.
-- `bun run build` compiles the standalone `bbox-ts-live` binary.
+- `bun run build` compiles the standalone `teamspeak-stream-live` binary.
 - Use `bun`/`bunx`, never `npm`/`node`.
 
 ## Code style
@@ -31,5 +31,5 @@ Project-specific rules for `bbox-ts-live`. See `README.md` for what the service 
 ## Git
 
 - Work directly on `main`.
-- Never commit secrets, real/private hostnames (use `example.com` placeholders), or build artifacts (`/bbox-ts-live`, `*.map`).
+- Never commit secrets, real/private hostnames (use `example.com` placeholders), or build artifacts (`/teamspeak-stream-live`, `*.map`).
 - If sensitive data was already committed, scrub it from history and force-push — don't just add a delete commit.

@@ -1,13 +1,13 @@
 {
-  "name": "bbox-ts-live",
+  "name": "teamspeak-stream-live",
   "version": "0.1.0",
-  "description": "Assigns a temporary TeamSpeak server group to users who are live on Broadcast Box",
+  "description": "Reflects live-streaming status (Broadcast Box, Twitch) into TeamSpeak as server-group prefixes",
   "license": "MIT",
   "author": "Tim Cheung <tim@cheung.io>",
   "type": "module",
   "module": "src/index.ts",
   "scripts": {
-    "build": "bun build --compile --minify --sourcemap --external cpu-features src/index.ts --outfile bbox-ts-live",
+    "build": "bun build --compile --minify --sourcemap --external cpu-features src/index.ts --outfile teamspeak-stream-live",
     "dev": "bun --watch src/index.ts",
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",

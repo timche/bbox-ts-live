@@ -1,4 +1,4 @@
-# bbox-ts-live
+# teamspeak-stream-live
 
 Reflects who is **live** into TeamSpeak's channel tree. It has two independent
 features — [**Broadcast Box**](#broadcast-box) and [**Twitch**](#twitch) — each
@@ -77,7 +77,7 @@ At least one feature (Broadcast Box or Twitch) must be configured; a feature is 
 | `TEAMSPEAK_SERVER_PORT`        |               | `9987`                           | Voice port of the virtual server to select                                                                                       |
 | `TEAMSPEAK_QUERY_USERNAME`     |               | `serveradmin`                    | ServerQuery login                                                                                                                |
 | `TEAMSPEAK_QUERY_PASSWORD`     |      ✅       | –                                | ServerQuery password                                                                                                             |
-| `TEAMSPEAK_QUERY_NICKNAME`     |               | `bbox-ts-live`                   | Nickname the query client connects with                                                                                          |
+| `TEAMSPEAK_QUERY_NICKNAME`     |               | `teamspeak-stream-live`          | Nickname the query client connects with                                                                                          |
 | `POLL_INTERVAL_MS`             |               | `10000`                          | Reconcile interval in milliseconds (shared by both features)                                                                     |
 | `LOG_LEVEL`                    |               | `info`                           | `debug` \| `info` \| `warn` \| `error`                                                                                           |
 
@@ -98,7 +98,7 @@ bun run lint           # oxlint
 bun run lint:fix       # oxlint --fix
 bun run format         # oxfmt (write) / bun run format:check
 bun test               # unit tests
-bun run build          # compile a standalone ./bbox-ts-live binary
+bun run build          # compile a standalone ./teamspeak-stream-live binary
 ```
 
 Tooling: [`ky`](https://github.com/sindresorhus/ky) + [`zod`](https://zod.dev) for validated HTTP, [`consola`](https://github.com/unjs/consola) for logging, and [`@timche/oxc-configs`](https://www.npmjs.com/package/@timche/oxc-configs) (oxlint + oxfmt) for linting/formatting.
@@ -110,8 +110,8 @@ A [lefthook](https://lefthook.dev) `pre-commit` hook runs oxfmt and `oxlint --fi
 The image compiles the app into a single self-contained binary (embedding the Bun runtime) and ships it on a minimal `debian:bookworm-slim` base.
 
 ```sh
-docker build -t bbox-ts-live .
-docker run --rm --env-file .env bbox-ts-live
+docker build -t teamspeak-stream-live .
+docker run --rm --env-file .env teamspeak-stream-live
 ```
 
 ### docker compose
@@ -124,7 +124,7 @@ docker compose up -d
 
 ### Publishing to GitHub Container Registry
 
-`.github/workflows/docker-publish.yml` builds and pushes a multi-arch image (`linux/amd64`, `linux/arm64`) to the GitHub Container Registry (`ghcr.io/<owner>/bbox-ts-live`) on `v*` tags (`git tag v0.1.0 && git push --tags`), with `:latest` tracking the newest tag. It can also be run manually via `workflow_dispatch`.
+`.github/workflows/docker-publish.yml` builds and pushes a multi-arch image (`linux/amd64`, `linux/arm64`) to the GitHub Container Registry (`ghcr.io/<owner>/teamspeak-stream-live`) on `v*` tags (`git tag v0.1.0 && git push --tags`), with `:latest` tracking the newest tag. It can also be run manually via `workflow_dispatch`.
 
 Authentication uses the built-in `GITHUB_TOKEN` (via the workflow's `packages: write` permission), so no additional secrets are required. The published package is linked to the repository automatically; make it public under the repository's package settings if you want to pull it without authentication.
 

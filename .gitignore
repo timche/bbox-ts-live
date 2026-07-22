@@ -2,7 +2,7 @@
 node_modules/
 
 # Compiled binary + build artifacts
-/bbox-ts-live
+/teamspeak-stream-live
 *.map
 
 # Environment

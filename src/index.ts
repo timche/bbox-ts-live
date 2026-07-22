@@ -28,7 +28,7 @@ function delay(ms: number, signal: AbortSignal): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  logger.info("Starting bbox-ts-live");
+  logger.info("Starting teamspeak-stream-live");
   logger.debug(
     `Features — Broadcast Box: ${config.broadcastBox ? "enabled" : "disabled"} · ` +
       `Twitch: ${config.twitch ? "enabled" : "disabled"} · poll: ${config.pollIntervalMs}ms`,

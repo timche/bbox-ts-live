@@ -26,9 +26,9 @@ WORKDIR /app
 # network via plain HTTP (TLS is terminated at the reverse proxy for public
 # traffic), and Bun's compiled binary bundles its own root store for the rare
 # case that BROADCAST_BOX_API_URL points at a public-CA HTTPS endpoint.
-COPY --from=build /app/bbox-ts-live /usr/local/bin/bbox-ts-live
+COPY --from=build /app/teamspeak-stream-live /usr/local/bin/teamspeak-stream-live
 
 # Run as the non-root user provided by the base image.
 USER nobody
 
-ENTRYPOINT ["/usr/local/bin/bbox-ts-live"]
+ENTRYPOINT ["/usr/local/bin/teamspeak-stream-live"]
