@@ -33,8 +33,8 @@ services:
       - broadcast
 
   bbox-ts-live:
-    # Replace with your Docker Hub image, e.g. timche/bbox-ts-live:latest
-    image: timche/bbox-ts-live:latest
+    # Replace with your GHCR image, e.g. ghcr.io/timche/bbox-ts-live:latest
+    image: ghcr.io/timche/bbox-ts-live:latest
     # Or build locally:
     # build: .
     restart: unless-stopped

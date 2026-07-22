@@ -83,13 +83,11 @@ docker run --rm --env-file .env bbox-ts-live
 docker compose up -d
 ```
 
-### Publishing to Docker Hub
+### Publishing to GitHub Container Registry
 
-`.github/workflows/docker-publish.yml` builds and pushes a multi-arch image (`linux/amd64`, `linux/arm64`) to Docker Hub on `v*` tags (`git tag v0.1.0 && git push --tags`), with `:latest` tracking the newest tag. It can also be run manually via `workflow_dispatch`. Configure these repository settings:
+`.github/workflows/docker-publish.yml` builds and pushes a multi-arch image (`linux/amd64`, `linux/arm64`) to the GitHub Container Registry (`ghcr.io/<owner>/bbox-ts-live`) on `v*` tags (`git tag v0.1.0 && git push --tags`), with `:latest` tracking the newest tag. It can also be run manually via `workflow_dispatch`.
 
-- **Variable** `DOCKERHUB_USERNAME` — your Docker Hub username (used for the image name).
-- **Secret** `DOCKERHUB_USERNAME` — same username, for login.
-- **Secret** `DOCKERHUB_TOKEN` — a Docker Hub access token.
+Authentication uses the built-in `GITHUB_TOKEN` (via the workflow's `packages: write` permission), so no additional secrets are required. The published package is linked to the repository automatically; make it public under the repository's package settings if you want to pull it without authentication.
 
 ## Verifying end to end
 
