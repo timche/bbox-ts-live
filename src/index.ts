@@ -2,7 +2,16 @@ import { BroadcastBoxClient } from "./broadcast-box.ts";
 import { config } from "./config.ts";
 import { logger } from "./logger.ts";
 import { TeamSpeakManager } from "./teamspeak.ts";
+import { TwitchWatcher } from "./twitch-watcher.ts";
+import { TwitchClient } from "./twitch.ts";
 import { Watcher } from "./watcher.ts";
+
+/** A named unit of work run each poll and torn down on shutdown. */
+interface NamedWatcher {
+  name: string;
+  reconcile: (signal: AbortSignal) => Promise<void>;
+  cleanup: () => Promise<void>;
+}
 
 function delay(ms: number, signal: AbortSignal): Promise<void> {
   return new Promise((resolve) => {
@@ -21,15 +30,34 @@ function delay(ms: number, signal: AbortSignal): Promise<void> {
 async function main(): Promise<void> {
   logger.info("Starting bbox-ts-live");
   logger.debug(
-    `Broadcast Box: ${config.broadcastBox.apiUrl} · public host: ${config.publicStreamHost} · ` +
-      `poll: ${config.pollIntervalMs}ms · live group: "${config.liveGroupName}" · ` +
-      `stream prefix: "${config.streamGroupPrefix}"`,
+    `Features — Broadcast Box: ${config.broadcastBox ? "enabled" : "disabled"} · ` +
+      `Twitch: ${config.twitch ? "enabled" : "disabled"} · poll: ${config.pollIntervalMs}ms`,
   );
 
-  const broadcastBox = new BroadcastBoxClient(config.broadcastBox);
   const teamspeak = await TeamSpeakManager.connect(config.teamspeak);
-  const liveGroupSgid = await teamspeak.ensureLiveGroup(config.liveGroupName);
-  const watcher = new Watcher(broadcastBox, teamspeak, liveGroupSgid, config);
+  const watchers: NamedWatcher[] = [];
+
+  if (config.broadcastBox) {
+    const broadcastBox = new BroadcastBoxClient(config.broadcastBox);
+    const liveGroupSgid = await teamspeak.ensureLiveGroup(config.broadcastBox.liveGroupName);
+    const watcher = new Watcher(broadcastBox, teamspeak, liveGroupSgid, config.broadcastBox);
+    watchers.push({
+      name: "Broadcast Box",
+      reconcile: (signal) => watcher.reconcile(signal),
+      cleanup: () => watcher.cleanup(),
+    });
+  }
+
+  if (config.twitch) {
+    const twitch = new TwitchClient(config.twitch);
+    const liveGroupSgid = await teamspeak.ensureLiveGroup(config.twitch.liveGroupName);
+    const watcher = new TwitchWatcher(twitch, teamspeak, liveGroupSgid, config.twitch);
+    watchers.push({
+      name: "Twitch",
+      reconcile: (signal) => watcher.reconcile(signal),
+      cleanup: () => watcher.cleanup(),
+    });
+  }
 
   const abort = new AbortController();
   let shuttingDown = false;
@@ -46,29 +74,39 @@ async function main(): Promise<void> {
   process.on("SIGINT", () => shutdown("SIGINT"));
   process.on("SIGTERM", () => shutdown("SIGTERM"));
 
-  while (!abort.signal.aborted) {
+  // Run each watcher in isolation so one feature's failure doesn't skip the
+  // other; both self-heal on the next poll.
+  const reconcileSafely = async (watcher: NamedWatcher): Promise<void> => {
     try {
       await watcher.reconcile(abort.signal);
     } catch (error) {
       if (!abort.signal.aborted) {
         logger.error(
-          "Reconcile cycle failed:",
+          `${watcher.name} reconcile cycle failed:`,
           error instanceof Error ? error.message : String(error),
         );
       }
+    }
+  };
+
+  while (!abort.signal.aborted) {
+    for (const watcher of watchers) {
+      await reconcileSafely(watcher);
     }
 
     await delay(config.pollIntervalMs, abort.signal);
   }
 
-  // Best-effort cleanup: clear the live group and delete per-user stream groups.
-  try {
-    await watcher.cleanup();
-  } catch (error) {
-    logger.error(
-      "Cleanup during shutdown failed:",
-      error instanceof Error ? error.message : String(error),
-    );
+  // Best-effort cleanup: clear the live groups and delete per-user stream groups.
+  for (const watcher of watchers) {
+    try {
+      await watcher.cleanup();
+    } catch (error) {
+      logger.error(
+        `${watcher.name} cleanup during shutdown failed:`,
+        error instanceof Error ? error.message : String(error),
+      );
+    }
   }
 
   await teamspeak.disconnect().catch(() => undefined);

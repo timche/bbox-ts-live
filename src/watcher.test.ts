@@ -64,15 +64,20 @@ function run(
   broadcastBox: { fetchLiveStreamKeys: () => Promise<Set<string>> },
   ts: unknown,
 ): Promise<void> {
-  return new Watcher(broadcastBox as never, ts as never, LIVE_SGID, config).reconcile();
+  return new Watcher(
+    broadcastBox as never,
+    ts as never,
+    LIVE_SGID,
+    config.broadcastBox as never,
+  ).reconcile();
 }
 
 test("config exposes decoupled group names and a normalized public host", () => {
-  expect(config.liveGroupName).toBe("🔴");
-  expect(config.streamGroupPrefix).toBe("📺");
-  expect(config.publicStreamHost).toBe("stream.example.com");
-  expect(config.broadcastBox.authorization).toBe(`Bearer ${btoa("secret")}`);
-  expect(config.liveMessageTemplate).toBe("{nickname} is now live: {link}");
+  expect(config.broadcastBox?.liveGroupName).toBe("🔴");
+  expect(config.broadcastBox?.streamGroupPrefix).toBe("📺");
+  expect(config.broadcastBox?.publicStreamHost).toBe("stream.example.com");
+  expect(config.broadcastBox?.authorization).toBe(`Bearer ${btoa("secret")}`);
+  expect(config.broadcastBox?.liveMessageTemplate).toBe("{nickname} is now live: {link}");
 });
 
 test("go-live: adds to the shared group and creates the stream-link group", async () => {

@@ -22,6 +22,16 @@ export interface ServerGroupRef {
   name: string;
 }
 
+/** A `twitch.tv/<username>` server group resolved to its username and members. */
+export interface TwitchGroupRef {
+  sgid: string;
+  name: string;
+  /** The group name after the prefix, lowercased (e.g. `alice`). */
+  username: string;
+  /** Database ids of the clients assigned to this group. */
+  members: Set<string>;
+}
+
 function isEmptyResultError(error: unknown): boolean {
   return (
     typeof error === "object" &&
@@ -151,6 +161,30 @@ export class TeamSpeakManager {
     return groups
       .filter((group) => group.sgid !== excludeSgid && group.name.startsWith(prefix))
       .map((group) => ({ sgid: group.sgid, name: group.name }));
+  }
+
+  /**
+   * Pre-assigned `twitch.tv/<username>` groups, each resolved to its twitch
+   * username and current member database ids. Groups with an empty username
+   * (a bare prefix) are skipped.
+   */
+  async listTwitchGroups(prefix: string): Promise<TwitchGroupRef[]> {
+    const groups = await this.#query.serverGroupList();
+    const matching = groups.filter((group) => group.name.startsWith(prefix));
+
+    const result: TwitchGroupRef[] = [];
+    for (const group of matching) {
+      const username = group.name.slice(prefix.length).trim().toLowerCase();
+
+      if (username === "") {
+        continue;
+      }
+
+      const members = await this.listGroupMemberDbids(group.sgid);
+      result.push({ sgid: group.sgid, name: group.name, username, members });
+    }
+
+    return result;
   }
 
   async addClientToGroup(databaseId: string, sgid: string): Promise<void> {

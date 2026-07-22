@@ -42,9 +42,17 @@ services:
       - teamspeak
       - broadcast-box
     environment:
+      # Broadcast Box feature (omit these to run Twitch only).
       BROADCAST_BOX_API_URL: http://broadcast-box:8080
       BROADCAST_BOX_ADMIN_TOKEN: "${BROADCAST_BOX_ADMIN_TOKEN}"
       PUBLIC_STREAM_HOST: "${PUBLIC_STREAM_HOST}"
+      LIVE_GROUP_NAME: "🔴"
+      STREAM_GROUP_PREFIX: "📺"
+      # Twitch feature (set both to enable; omit to run Broadcast Box only).
+      # TWITCH_CLIENT_ID: "${TWITCH_CLIENT_ID}"
+      # TWITCH_CLIENT_SECRET: "${TWITCH_CLIENT_SECRET}"
+      # TWITCH_LIVE_GROUP_NAME: "🟣"
+      # TWITCH_GROUP_PREFIX: "twitch.tv/"
       TEAMSPEAK_HOST: teamspeak
       TEAMSPEAK_QUERY_PORT: "10011"
       TEAMSPEAK_SERVER_PORT: "9987"
@@ -52,8 +60,6 @@ services:
       TEAMSPEAK_QUERY_PASSWORD: "${TEAMSPEAK_QUERY_PASSWORD}"
       TEAMSPEAK_QUERY_NICKNAME: bbox-ts-live
       POLL_INTERVAL_MS: "10000"
-      LIVE_GROUP_NAME: "🔴"
-      STREAM_GROUP_PREFIX: "📺"
       LOG_LEVEL: info
     networks:
       - broadcast
